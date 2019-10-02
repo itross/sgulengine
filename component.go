@@ -7,7 +7,9 @@
 // Package sgulengine defines the Sgul Engine structure and functionalities.
 package sgulengine
 
-import "github.com/itross/sgul"
+import (
+	"github.com/itross/sgul"
+)
 
 // Component is the main sgul engine component interface.
 type Component interface {
