@@ -20,6 +20,7 @@ import (
 
 // Engine is the sgul app engine main structure.
 type Engine struct {
+	// TODO: use a decoupled components registry
 	components map[string]Component
 	stopch     chan os.Signal
 	logger     *sgul.Logger
