@@ -21,6 +21,7 @@ type APIComponent struct {
 	server      *http.Server
 	router      chi.Router
 	controllers []sgul.RestController
+	middlewares []func(http.Handler) http.Handler
 }
 
 // Configure willl configure the api component with its internal server and router.
@@ -39,15 +40,13 @@ func (api *APIComponent) configureRouter() {
 		AllowedMethods: api.config.Cors.Methods,
 		AllowedHeaders: api.config.Cors.Headers,
 	})
-	api.router.Use(
-		cors.Handler,
-		middleware.RequestID,
-		middleware.RealIP,
-		chilogger.NewZapMiddleware("router", sgul.GetLogger().Desugar()),
-		middleware.RedirectSlashes,
-		middleware.Recoverer,
-		middleware.DefaultCompress,
-	)
+	api.middlewares = append(api.middlewares, cors.Handler)
+	api.router.Use(api.middlewares...)
+}
+
+// Use sets middlewares for this API routes.
+func (api *APIComponent) Use(middlewares ...func(http.Handler) http.Handler) {
+	api.middlewares = append(api.middlewares, middlewares...)
 }
 
 func (api *APIComponent) registerRoutes() {
@@ -107,7 +106,29 @@ func NewAPIComponent() *APIComponent {
 	}
 }
 
-// NewAPIComponentWith .
+// NewAPIComponentWith returns a new API component instance initialized with the
+// controllers list.
 func NewAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
+	return NewAPIComponent().AddControllers(controllers...)
+}
+
+// NewDefaultAPIComponent returns a new API component instance configured
+// with default middlewares.
+func NewDefaultAPIComponent() *APIComponent {
+	api := NewAPIComponent()
+	api.Use(
+		middleware.RequestID,
+		middleware.RealIP,
+		chilogger.NewZapMiddleware("router", sgul.GetLogger().Desugar()),
+		middleware.RedirectSlashes,
+		middleware.Recoverer,
+		middleware.DefaultCompress,
+	)
+	return api
+}
+
+// NewDefaultAPIComponentWith returns a new API component instance configured
+// with default middlewares and initialized with the controllers list.
+func NewDefaultAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
 	return NewAPIComponent().AddControllers(controllers...)
 }
