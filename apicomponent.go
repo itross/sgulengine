@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	chilogger "github.com/766b/chi-logger"
 	"github.com/go-chi/chi"
@@ -51,11 +52,25 @@ func (api *APIComponent) Use(middlewares ...func(http.Handler) http.Handler) {
 
 func (api *APIComponent) registerRoutes() {
 	if len(api.controllers) > 0 {
+		// register controllers routes
 		api.router.Route(api.config.Endpoint.BaseRoutingPath, func(r chi.Router) {
 			for _, controller := range api.controllers {
 				r.Mount(controller.BasePath(), controller.Router())
 			}
 		})
+
+		// log out configured routes
+		walker := func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+			route = strings.Replace(route, "/*/", "/", -1)
+			api.logger.Infow("initialized", "method", method, "route", route)
+			return nil
+		}
+
+		if err := chi.Walk(api.router, walker); err != nil {
+			api.logger.Panicf("error: %s\n", err.Error())
+		}
+		api.logger.Info("all api routes set up")
+
 		return
 	}
 
