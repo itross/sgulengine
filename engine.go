@@ -60,6 +60,11 @@ func New() *Engine {
 	return e
 }
 
+// NewWith returns a new sgul Engine initialized with components list.
+func NewWith(components ...Component) *Engine {
+	return New().With(components...)
+}
+
 // With registers one or more sgul Components with the sgul Engine.
 func (e *Engine) With(components ...Component) *Engine {
 	var cname string
