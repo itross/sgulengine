@@ -8,6 +8,7 @@
 package sgulengine
 
 import (
+	"context"
 	"errors"
 	"os"
 	"os/signal"
@@ -15,6 +16,7 @@ import (
 	"time"
 
 	"github.com/itross/sgul"
+	"github.com/itross/sgulengine/econtext"
 )
 
 // Engine is the sgul app engine main structure.
@@ -23,6 +25,7 @@ type Engine struct {
 	components map[string]Component
 	stopch     chan os.Signal
 	logger     *sgul.Logger
+	ctx        context.Context
 }
 
 // New returns a new sgul Engine instance.
@@ -31,6 +34,7 @@ func New() *Engine {
 		components: make(map[string]Component),
 		stopch:     make(chan os.Signal),
 		logger:     sgul.GetLogger(),
+		ctx:        context.Background(),
 	}
 	// set up os signal notifications
 	signal.Notify(e.stopch, syscall.SIGTERM)
@@ -102,6 +106,7 @@ func (e *Engine) Run() {
 // RunAndWait wil starts up the Engine and wait for shutdown.
 func (e *Engine) RunAndWait() {
 	e.Run()
+	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponents, e.components)
 	select {}
 }
 
