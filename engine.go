@@ -24,8 +24,8 @@ type (
 	// componentRegistry is the type for the map of registred components.
 	componentRegistry map[string]Component
 
-	// componentLocator is the locator for registered components instances by name.
-	componentLocator struct {
+	// ComponentLocator is the locator for registered components instances by name.
+	ComponentLocator struct {
 		sync.RWMutex
 		cReg *componentRegistry
 	}
@@ -34,7 +34,7 @@ type (
 	Engine struct {
 		// TODO: use a decoupled components registry
 		cReg    componentRegistry
-		locator *componentLocator
+		locator *ComponentLocator
 		stopch  chan os.Signal
 		logger  *sgul.Logger
 		ctx     context.Context
@@ -42,7 +42,7 @@ type (
 )
 
 // Get returns a component instance from the components registry.
-func (locator *componentLocator) Get(cname string) Component {
+func (locator *ComponentLocator) Get(cname string) Component {
 	locator.RLock()
 	defer locator.RUnlock()
 
@@ -54,7 +54,7 @@ func New() *Engine {
 	registry := make(componentRegistry)
 	e := &Engine{
 		cReg:    registry,
-		locator: &componentLocator{cReg: &registry},
+		locator: &ComponentLocator{cReg: &registry},
 		stopch:  make(chan os.Signal),
 		logger:  sgul.GetLogger(),
 		ctx:     context.Background(),
