@@ -29,9 +29,8 @@ type Engine struct {
 
 // New returns a new sgul Engine instance.
 func New() *Engine {
-	registry := make(componentRegistry)
 	e := &Engine{
-		cReg:   registry,
+		cReg:   make(componentRegistry),
 		stopch: make(chan os.Signal),
 		logger: sgul.GetLogger(),
 		ctx:    context.Background(),
