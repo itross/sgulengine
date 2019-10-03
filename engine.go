@@ -12,40 +12,19 @@ import (
 	"errors"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
 	"github.com/itross/sgul"
-	"github.com/itross/sgulengine/econtext"
 )
 
-type (
-	// componentRegistry is the type for the map of registred components.
-	componentRegistry map[string]Component
-
-	// ComponentLocator is the locator for registered components instances by name.
-	ComponentLocator struct {
-		sync.RWMutex
-		cReg *componentRegistry
-	}
-
-	// Engine is the sgul app engine main structure.
-	Engine struct {
-		// TODO: use a decoupled components registry
-		cReg   componentRegistry
-		stopch chan os.Signal
-		logger *sgul.Logger
-		ctx    context.Context
-	}
-)
-
-// Get returns a component instance from the components registry.
-func (locator *ComponentLocator) Get(cname string) Component {
-	locator.RLock()
-	defer locator.RUnlock()
-
-	return (*locator.cReg)[cname]
+// Engine is the sgul app engine main structure.
+type Engine struct {
+	// TODO: use a decoupled components registry
+	cReg   componentRegistry
+	stopch chan os.Signal
+	logger *sgul.Logger
+	ctx    context.Context
 }
 
 // New returns a new sgul Engine instance.
@@ -76,7 +55,7 @@ func New() *Engine {
 	}()
 
 	// set the components locator into the app context
-	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
+	EngineContext = context.WithValue(e.ctx, CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
 
 	return e
 }
