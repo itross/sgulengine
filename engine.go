@@ -33,11 +33,10 @@ type (
 	// Engine is the sgul app engine main structure.
 	Engine struct {
 		// TODO: use a decoupled components registry
-		cReg    componentRegistry
-		locator *ComponentLocator
-		stopch  chan os.Signal
-		logger  *sgul.Logger
-		ctx     context.Context
+		cReg   componentRegistry
+		stopch chan os.Signal
+		logger *sgul.Logger
+		ctx    context.Context
 	}
 )
 
@@ -53,11 +52,10 @@ func (locator *ComponentLocator) Get(cname string) Component {
 func New() *Engine {
 	registry := make(componentRegistry)
 	e := &Engine{
-		cReg:    registry,
-		locator: &ComponentLocator{cReg: &registry},
-		stopch:  make(chan os.Signal),
-		logger:  sgul.GetLogger(),
-		ctx:     context.Background(),
+		cReg:   registry,
+		stopch: make(chan os.Signal),
+		logger: sgul.GetLogger(),
+		ctx:    context.Background(),
 	}
 	// set up os signal notifications
 	signal.Notify(e.stopch, syscall.SIGTERM)
@@ -76,6 +74,9 @@ func New() *Engine {
 		e.logger.Info("Bye!")
 		os.Exit(0)
 	}()
+
+	// set the components locator into the app context
+	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
 
 	return e
 }
@@ -124,8 +125,6 @@ func (e *Engine) Start() {
 func (e *Engine) Run() {
 	e.Configure()
 	e.Start()
-	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
-	e.logger.Info("component locator has been set into app context")
 }
 
 // RunAndWait wil starts up the Engine and wait for shutdown.
