@@ -124,7 +124,8 @@ func (e *Engine) Start() {
 func (e *Engine) Run() {
 	e.Configure()
 	e.Start()
-	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, e.locator)
+	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
+	e.logger.Info("component locator has been set into app context")
 }
 
 // RunAndWait wil starts up the Engine and wait for shutdown.
