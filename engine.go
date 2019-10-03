@@ -11,7 +11,6 @@ import (
 	"errors"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -118,7 +117,7 @@ func (e *Engine) configureComponent(component Component) error {
 	cname := component.Name()
 	e.logger.Infof("configuring %s component", cname)
 
-	cconf := sgul.Get(strings.ToLower(cname))
+	cconf := sgul.GetComponentConfig(cname)
 	if cconf == nil {
 		return errors.New("no configuration found")
 	}
