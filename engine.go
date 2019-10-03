@@ -12,6 +12,7 @@ import (
 	"errors"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -19,22 +20,44 @@ import (
 	"github.com/itross/sgulengine/econtext"
 )
 
-// Engine is the sgul app engine main structure.
-type Engine struct {
-	// TODO: use a decoupled components registry
-	components map[string]Component
-	stopch     chan os.Signal
-	logger     *sgul.Logger
-	ctx        context.Context
+type (
+	// componentRegistry is the type for the map of registred components.
+	componentRegistry map[string]Component
+
+	// componentLocator is the locator for registered components instances by name.
+	componentLocator struct {
+		sync.RWMutex
+		cReg *componentRegistry
+	}
+
+	// Engine is the sgul app engine main structure.
+	Engine struct {
+		// TODO: use a decoupled components registry
+		cReg    componentRegistry
+		locator *componentLocator
+		stopch  chan os.Signal
+		logger  *sgul.Logger
+		ctx     context.Context
+	}
+)
+
+// Get returns a component instance from the components registry.
+func (locator *componentLocator) Get(cname string) Component {
+	locator.RLock()
+	defer locator.RUnlock()
+
+	return (*locator.cReg)[cname]
 }
 
 // New returns a new sgul Engine instance.
 func New() *Engine {
+	registry := make(componentRegistry)
 	e := &Engine{
-		components: make(map[string]Component),
-		stopch:     make(chan os.Signal),
-		logger:     sgul.GetLogger(),
-		ctx:        context.Background(),
+		cReg:    registry,
+		locator: &componentLocator{cReg: &registry},
+		stopch:  make(chan os.Signal),
+		logger:  sgul.GetLogger(),
+		ctx:     context.Background(),
 	}
 	// set up os signal notifications
 	signal.Notify(e.stopch, syscall.SIGTERM)
@@ -63,13 +86,13 @@ func (e *Engine) With(components ...Component) *Engine {
 
 	for _, component := range components {
 		cname = component.Name()
-		if e.components[cname] != nil {
+		if e.cReg[cname] != nil {
 			e.logger.Warnf("component %s already registered", cname)
 			continue
 		}
 		e.logger.Infof("registering %s component", cname)
 		component.SetLogger(e.logger)
-		e.components[cname] = component
+		e.cReg[cname] = component
 	}
 
 	return e
@@ -77,7 +100,7 @@ func (e *Engine) With(components ...Component) *Engine {
 
 // ForEachComponent executes a function on each of the Engine components.
 func (e *Engine) ForEachComponent(fn func(component Component) error) {
-	for cname, component := range e.components {
+	for cname, component := range e.cReg {
 		if err := fn(component); err != nil {
 			e.logger.Errorf("error on component %s: %s", cname, err.Error())
 			panic(err)
@@ -101,7 +124,7 @@ func (e *Engine) Start() {
 func (e *Engine) Run() {
 	e.Configure()
 	e.Start()
-	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponents, e.components)
+	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponentLocator, e.locator)
 }
 
 // RunAndWait wil starts up the Engine and wait for shutdown.
@@ -145,5 +168,5 @@ func (e *Engine) Shutdown() {
 
 // Component returns a component instance.
 func (e *Engine) Component(name string) Component {
-	return e.components[name]
+	return e.cReg[name]
 }
