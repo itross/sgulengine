@@ -106,3 +106,8 @@ func NewAPIComponent() *APIComponent {
 		},
 	}
 }
+
+// NewAPIComponentWith .
+func NewAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
+	return NewAPIComponent().AddControllers(controllers...)
+}

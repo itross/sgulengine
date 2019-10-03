@@ -21,8 +21,20 @@ func (locator *ComponentLocator) Get(cname string) Component {
 	return (*locator.cReg)[cname]
 }
 
+// GetAll returns all of the registered components.
+func (locator *ComponentLocator) GetAll() []Component {
+	locator.RLock()
+	defer locator.RUnlock()
+
+	components := []Component{}
+	for _, v := range *locator.cReg {
+		components = append(components, v)
+	}
+
+	return components
+}
+
 // GetComponentLocator helper func to get the Engine components locator from the app context.
 func GetComponentLocator() *ComponentLocator {
 	return EngineContext.Value(CtxComponentLocator).(*ComponentLocator)
-
 }
