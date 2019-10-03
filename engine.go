@@ -101,12 +101,12 @@ func (e *Engine) Start() {
 func (e *Engine) Run() {
 	e.Configure()
 	e.Start()
+	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponents, e.components)
 }
 
 // RunAndWait wil starts up the Engine and wait for shutdown.
 func (e *Engine) RunAndWait() {
 	e.Run()
-	econtext.EngineContext = context.WithValue(e.ctx, econtext.CtxComponents, e.components)
 	select {}
 }
 
