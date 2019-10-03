@@ -56,6 +56,8 @@ func New() *Engine {
 	// set the components locator into the app context
 	EngineContext = context.WithValue(e.ctx, CtxComponentLocator, &ComponentLocator{cReg: &e.cReg})
 
+	PrintLogo()
+
 	return e
 }
 
