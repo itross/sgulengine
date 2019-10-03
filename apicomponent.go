@@ -29,7 +29,6 @@ type APIComponent struct {
 func (api *APIComponent) Configure(conf interface{}) error {
 	api.config = conf.(sgul.API)
 	api.configureRouter()
-	api.registerRoutes()
 	return nil
 }
 
@@ -66,6 +65,7 @@ func (api *APIComponent) registerRoutes() {
 
 // Start willl start the API Server after initialization.
 func (api *APIComponent) Start(e *Engine) error {
+	api.registerRoutes()
 	addr := fmt.Sprintf(":%d", api.config.Endpoint.Port)
 	api.server = &http.Server{
 		Addr:    addr,
