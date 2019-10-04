@@ -46,7 +46,7 @@ func (api *APIComponent) configureRouter() {
 }
 
 // Use sets middlewares for this API routes.
-func (api *APIComponent) Use(middlewares ...func(http.Handler) http.Handler) {
+func (api *APIComponent) Use(middlewares ...func(http.Handler) http.Handler) *APIComponent {
 	api.middlewares = append(api.middlewares, middlewares...)
 }
 
