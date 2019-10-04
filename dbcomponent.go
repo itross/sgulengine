@@ -9,10 +9,13 @@ package sgulengine
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/itross/sgul"
 	"github.com/jinzhu/gorm"
 )
+
+const mysqlConnectionStringFormat = "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local"
 
 // DBComponent is the default Sgul Engine DB component.
 // It opens a DB connection and provide it to the clients.
@@ -41,13 +44,7 @@ func (dbc *DBComponent) Configure(conf interface{}) error {
 // Start willl start the DB Server after initialization.
 // TODO: customize connectionString and gorm.Open with configured db.type.
 func (dbc *DBComponent) Start(e *Engine) error {
-	connectionString := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
-		dbc.config.User,
-		dbc.config.Password,
-		dbc.config.Host,
-		dbc.config.Port,
-		dbc.config.Database)
+	connectionString := dbc.connectionString()
 	dbc.logger.Debugf("Connecting to DB at %s", connectionString)
 
 	var err error
@@ -72,4 +69,28 @@ func (dbc *DBComponent) Shutdown() {
 // DB returns the DB Component db reference.
 func (dbc *DBComponent) DB() *gorm.DB {
 	return dbc.db
+}
+
+// returns the righr db connection string according to the configured db type.
+// Note that actually we support only MySQL.
+// Default connection string is for MySQL.
+func (dbc *DBComponent) connectionString() string {
+	switch strings.ToLower(dbc.config.Type) {
+	case "mysql":
+		return fmt.Sprintf(
+			mysqlConnectionStringFormat,
+			dbc.config.User,
+			dbc.config.Password,
+			dbc.config.Host,
+			dbc.config.Port,
+			dbc.config.Database)
+	default:
+		return fmt.Sprintf(
+			mysqlConnectionStringFormat,
+			dbc.config.User,
+			dbc.config.Password,
+			dbc.config.Host,
+			dbc.config.Port,
+			dbc.config.Database)
+	}
 }
