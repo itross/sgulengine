@@ -25,6 +25,43 @@ type APIComponent struct {
 	middlewares []func(http.Handler) http.Handler
 }
 
+// NewAPIComponent returns a new API component instance.
+func NewAPIComponent() *APIComponent {
+	return &APIComponent{
+		BaseComponent: BaseComponent{
+			uniqueName: "api",
+			logger:     sgul.GetLogger(),
+		},
+	}
+}
+
+// NewAPIComponentWith returns a new API component instance initialized with the
+// controllers list.
+func NewAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
+	return NewAPIComponent().WithControllers(controllers...)
+}
+
+// NewDefaultAPIComponent returns a new API component instance configured
+// with default middlewares.
+func NewDefaultAPIComponent() *APIComponent {
+	api := NewAPIComponent()
+	api.WithMiddlewares(
+		middleware.RequestID,
+		middleware.RealIP,
+		chilogger.NewZapMiddleware("router", sgul.GetLogger().Desugar()),
+		middleware.RedirectSlashes,
+		middleware.Recoverer,
+		middleware.DefaultCompress,
+	)
+	return api
+}
+
+// NewDefaultAPIComponentWith returns a new API component instance configured
+// with default middlewares and initialized with the controllers list.
+func NewDefaultAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
+	return NewAPIComponent().WithControllers(controllers...)
+}
+
 // Configure willl configure the api component with its internal server and router.
 // All registered Rest Controller will be coupled to the relative route.
 // Then the main server handler will be gained to the http server and started.
@@ -43,12 +80,6 @@ func (api *APIComponent) configureRouter() {
 	})
 	api.middlewares = append(api.middlewares, cors.Handler)
 	api.router.Use(api.middlewares...)
-}
-
-// Use sets middlewares for this API routes.
-func (api *APIComponent) Use(middlewares ...func(http.Handler) http.Handler) *APIComponent {
-	api.middlewares = append(api.middlewares, middlewares...)
-	return api
 }
 
 func (api *APIComponent) registerRoutes() {
@@ -101,50 +132,35 @@ func (api *APIComponent) Shutdown() {
 	}
 }
 
-// AddControllers adds a multiple Rest Controllers to the controllers list.
-func (api *APIComponent) AddControllers(controllers ...sgul.RestController) *APIComponent {
-	api.controllers = append(api.controllers, controllers...)
+// AddMiddlewares sets middlewares for this API routes.
+func (api *APIComponent) AddMiddlewares(middlewares ...func(http.Handler) http.Handler) {
+	api.middlewares = append(api.middlewares, middlewares...)
+}
+
+// WithMiddlewares sets middlewares for this API routes.
+func (api *APIComponent) WithMiddlewares(middlewares ...func(http.Handler) http.Handler) *APIComponent {
+	api.AddMiddlewares(middlewares...)
 	return api
+}
+
+// AddControllers adds multiple Rest Controllers to the controllers list.
+func (api *APIComponent) AddControllers(controllers ...sgul.RestController) {
+	api.controllers = append(api.controllers, controllers...)
 }
 
 // AddController adds a single Rest Controller to the controllers list.
-func (api *APIComponent) AddController(controller sgul.RestController) *APIComponent {
-	return api.AddControllers(controller)
+func (api *APIComponent) AddController(controller sgul.RestController) {
+	api.AddControllers(controller)
 }
 
-// NewAPIComponent returns a new API component instance.
-func NewAPIComponent() *APIComponent {
-	return &APIComponent{
-		BaseComponent: BaseComponent{
-			uniqueName: "api",
-			logger:     sgul.GetLogger(),
-		},
-	}
-}
-
-// NewAPIComponentWith returns a new API component instance initialized with the
-// controllers list.
-func NewAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
-	return NewAPIComponent().AddControllers(controllers...)
-}
-
-// NewDefaultAPIComponent returns a new API component instance configured
-// with default middlewares.
-func NewDefaultAPIComponent() *APIComponent {
-	api := NewAPIComponent()
-	api.Use(
-		middleware.RequestID,
-		middleware.RealIP,
-		chilogger.NewZapMiddleware("router", sgul.GetLogger().Desugar()),
-		middleware.RedirectSlashes,
-		middleware.Recoverer,
-		middleware.DefaultCompress,
-	)
+// WithController adds a single Rest Controller and return the api conponent instance.
+func (api *APIComponent) WithController(controller sgul.RestController) *APIComponent {
+	api.AddController(controller)
 	return api
 }
 
-// NewDefaultAPIComponentWith returns a new API component instance configured
-// with default middlewares and initialized with the controllers list.
-func NewDefaultAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
-	return NewAPIComponent().AddControllers(controllers...)
+// WithControllers adds multiple Rest Controller and return the api conponent instance.
+func (api *APIComponent) WithControllers(controllers ...sgul.RestController) *APIComponent {
+	api.AddControllers(controllers...)
+	return api
 }
