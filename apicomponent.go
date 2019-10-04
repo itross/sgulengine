@@ -128,7 +128,7 @@ func (api *APIComponent) Start(e *Engine) error {
 // Shutdown will stop serving the API.
 func (api *APIComponent) Shutdown() {
 	if err := api.server.Shutdown(context.Background()); err != nil {
-		api.Logger().Errorf("error shutting down API Component http server: %s", err.Error())
+		api.logger.Errorw("error shutting down API Component http server", "error", err)
 	}
 }
 
