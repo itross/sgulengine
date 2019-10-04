@@ -44,7 +44,7 @@ func (dbc *DBComponent) Start(e *Engine) error {
 	dbc.logger.Debugf("Connecting to DB at %s", connectionString)
 
 	var err error
-	dbc.db, err = gorm.Open("mysql")
+	dbc.db, err = gorm.Open(dbc.config.Type, connectionString)
 	if err != nil {
 		dbc.logger.Errorw("Unable to connect to Database server", "error", err)
 		return err
