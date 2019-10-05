@@ -125,12 +125,6 @@ func (api *APIComponent) Start(e *Engine) error {
 		Handler: api.router,
 	}
 
-	// go func() {
-	// 	api.logger.Fatal(api.server.ListenAndServe())
-	// }()
-
-	// return nil
-
 	return api.server.ListenAndServe()
 }
 
