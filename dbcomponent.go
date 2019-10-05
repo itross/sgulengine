@@ -17,8 +17,8 @@ import (
 
 const mysqlConnectionStringFormat = "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local"
 
-// DBComponentInterface is the DB Component contract.
-type DBComponentInterface interface {
+// DBProvider is the DB Component Provider contract.
+type DBProvider interface {
 	DB() *gorm.DB
 }
 
