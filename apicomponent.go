@@ -80,12 +80,12 @@ func (api *APIComponent) Configure(conf interface{}) error {
 
 func (api *APIComponent) configureRouter() {
 	api.router = chi.NewRouter()
-	cors := cors.New(cors.Options{
+	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: api.config.Cors.Origin,
 		AllowedMethods: api.config.Cors.Methods,
 		AllowedHeaders: api.config.Cors.Headers,
 	})
-	api.middlewares = append(api.middlewares, cors.Handler)
+	api.middlewares = append(api.middlewares, corsMiddleware.Handler)
 	api.router.Use(api.middlewares...)
 }
 
@@ -125,11 +125,13 @@ func (api *APIComponent) Start(e *Engine) error {
 		Handler: api.router,
 	}
 
-	go func() {
-		api.server.ListenAndServe()
-	}()
+	// go func() {
+	// 	api.logger.Fatal(api.server.ListenAndServe())
+	// }()
 
-	return nil
+	// return nil
+
+	return api.server.ListenAndServe()
 }
 
 // Shutdown will stop serving the API.
