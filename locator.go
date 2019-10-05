@@ -26,7 +26,7 @@ func (locator *ComponentLocator) GetAll() []Component {
 	locator.RLock()
 	defer locator.RUnlock()
 
-	components := []Component{}
+	var components []Component
 	for _, v := range *(locator.cReg) {
 		components = append(components, v)
 	}
