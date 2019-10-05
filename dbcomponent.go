@@ -17,6 +17,11 @@ import (
 
 const mysqlConnectionStringFormat = "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local"
 
+// DBComponentInterface is the DB Component contract.
+type DBComponentInterface interface {
+	DB() *gorm.DB
+}
+
 // DBComponent is the default Sgul Engine DB component.
 // It opens a DB connection and provide it to the clients.
 type DBComponent struct {
