@@ -26,8 +26,9 @@ type DBProvider interface {
 // It opens a DB connection and provide it to the clients.
 type DBComponent struct {
 	BaseComponent
-	config sgul.DB
-	db     *gorm.DB
+	config       sgul.DB
+	db           *gorm.DB
+	repositories []sgul.GormRepository
 }
 
 // NewDBComponent returns a new DB Compoennts instance.
@@ -61,7 +62,19 @@ func (dbc *DBComponent) Start(e *Engine) error {
 
 	dbc.db.LogMode(false)
 	dbc.logger.Info("DB connection established")
+
+	dbc.injectDB()
+	dbc.logger.Info("DB instance injected into repositories")
+
 	return nil
+}
+
+func (dbc *DBComponent) injectDB() {
+	if len(dbc.repositories) > 0 {
+		for _, repository := range dbc.repositories {
+			repository.SetDB(dbc.db)
+		}
+	}
 }
 
 // Shutdown will stop serving the API.
@@ -74,6 +87,11 @@ func (dbc *DBComponent) Shutdown() {
 // DB returns the DB Component db reference.
 func (dbc *DBComponent) DB() *gorm.DB {
 	return dbc.db
+}
+
+// AddRepository adds a sgul Repository to the managed repositories.
+func (dbc *DBComponent) AddRepository(repository sgul.GormRepository) {
+	dbc.repositories = append(dbc.repositories, repository)
 }
 
 // returns the righr db connection string according to the configured db type.
