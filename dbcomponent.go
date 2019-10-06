@@ -57,7 +57,7 @@ func (dbc *DBComponent) Start(e *Engine) error {
 	var err error
 	dbc.db, err = gorm.Open(dbc.config.Type, connectionString)
 	if err != nil {
-		e.cErrs <- errors.New(fmt.Sprintf("unable to connect to Database server: %s", err))
+		e.cErrs <- errors.New(fmt.Sprintf("error starting DB component: %s", err))
 		return nil
 	}
 
