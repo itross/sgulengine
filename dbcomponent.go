@@ -8,6 +8,7 @@
 package sgulengine
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -56,9 +57,7 @@ func (dbc *DBComponent) Start(e *Engine) error {
 	var err error
 	dbc.db, err = gorm.Open(dbc.config.Type, connectionString)
 	if err != nil {
-		dbc.logger.Errorw("Unable to connect to Database server", "error", err)
-		e.cErrs <- err
-		//return err
+		e.cErrs <- errors.New(fmt.Sprintf("unable to connect to Database server: %s", err))
 	}
 
 	dbc.db.LogMode(false)

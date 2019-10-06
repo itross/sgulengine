@@ -9,6 +9,7 @@ package sgulengine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -126,10 +127,9 @@ func (api *APIComponent) Start(e *Engine) error {
 	}
 
 	if err := api.server.ListenAndServe(); err != nil {
-		e.cErrs <- err
+		e.cErrs <- errors.New(fmt.Sprintf("error starting API component: %s", err))
 	}
 
-	//return api.server.ListenAndServe()
 	return nil
 }
 

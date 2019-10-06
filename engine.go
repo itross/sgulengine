@@ -107,7 +107,7 @@ func (e *Engine) Start() {
 	e.logger.Info("starting Engine components")
 	e.ForEachComponent(e.startComponent)
 	for errs := range e.cErrs {
-		e.logger.Errorf("error on cErrs channel: %s", errs)
+		e.logger.Fatalf("error starting Engine: %s", errs)
 	}
 }
 
