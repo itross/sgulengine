@@ -8,7 +8,6 @@
 package sgulengine
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -59,7 +58,7 @@ func (dbc *DBComponent) Start(e *Engine) error {
 	var err error
 	dbc.db, err = gorm.Open(dbc.config.Type, connectionString)
 	if err != nil {
-		e.cErrs <- errors.New(fmt.Sprintf("error starting DB component: %s", err))
+		e.cErrs <- fmt.Errorf("error starting DB component: %s", err)
 		return nil
 	}
 

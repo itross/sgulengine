@@ -9,7 +9,6 @@ package sgulengine
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -134,7 +133,7 @@ func (api *APIComponent) Start(e *Engine) error {
 		//
 		// So, here our intent is to return back to the SgulEngine all server errors but the ErrServerClosed.
 		if err != http.ErrServerClosed {
-			e.cErrs <- errors.New(fmt.Sprintf("error starting API component: %s", err))
+			e.cErrs <- fmt.Errorf("error starting API component: %s", err)
 		}
 	}
 
