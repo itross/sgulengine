@@ -90,8 +90,9 @@ func (dbc *DBComponent) DB() *gorm.DB {
 }
 
 // AddRepository adds a sgul Repository to the managed repositories.
-func (dbc *DBComponent) AddRepository(repository sgul.GormRepositoryInterface) {
+func (dbc *DBComponent) AddRepository(repository sgul.GormRepositoryInterface) *DBComponent {
 	dbc.repositories = append(dbc.repositories, repository)
+	return dbc
 }
 
 // returns the righr db connection string according to the configured db type.
