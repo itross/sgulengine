@@ -28,7 +28,7 @@ type DBComponent struct {
 	BaseComponent
 	config       sgul.DB
 	db           *gorm.DB
-	repositories []sgul.GormRepository
+	repositories []sgul.GormRepositoryInterface
 }
 
 // NewDBComponent returns a new DB Compoennts instance.
@@ -90,7 +90,7 @@ func (dbc *DBComponent) DB() *gorm.DB {
 }
 
 // AddRepository adds a sgul Repository to the managed repositories.
-func (dbc *DBComponent) AddRepository(repository sgul.GormRepository) {
+func (dbc *DBComponent) AddRepository(repository sgul.GormRepositoryInterface) {
 	dbc.repositories = append(dbc.repositories, repository)
 }
 
