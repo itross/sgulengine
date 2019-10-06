@@ -57,7 +57,8 @@ func (dbc *DBComponent) Start(e *Engine) error {
 	dbc.db, err = gorm.Open(dbc.config.Type, connectionString)
 	if err != nil {
 		dbc.logger.Errorw("Unable to connect to Database server", "error", err)
-		return err
+		e.cErrs <- err
+		//return err
 	}
 
 	dbc.db.LogMode(false)

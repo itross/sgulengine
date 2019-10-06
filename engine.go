@@ -25,6 +25,7 @@ type Engine struct {
 	stopch chan os.Signal
 	logger *sgul.Logger
 	ctx    context.Context
+	cErrs 	chan error
 }
 
 // New returns a new sgul Engine instance.
@@ -34,6 +35,7 @@ func New() *Engine {
 		stopch: make(chan os.Signal),
 		logger: sgul.GetLogger(),
 		ctx:    context.Background(),
+		cErrs: make(chan error),
 	}
 	// set up os signal notifications
 	signal.Notify(e.stopch, syscall.SIGTERM)
@@ -104,6 +106,9 @@ func (e *Engine) Configure() {
 func (e *Engine) Start() {
 	e.logger.Info("starting Engine components")
 	e.ForEachComponent(e.startComponent)
+	for errs := range e.cErrs {
+		e.logger.Errorf("error on cErrs channel: %s", errs)
+	}
 }
 
 // Run will starts up the Engine. All starts here!
@@ -141,8 +146,9 @@ func (e *Engine) configureComponent(component Component) error {
 func (e *Engine) startComponent(component Component) error {
 	cname := component.Name()
 	e.logger.Infof("starting %s component", cname)
-
-	return component.Start(e)
+	go component.Start(e)
+	return nil
+	//return component.Start(e)
 }
 
 // Shutdown will call shutdown func on each registered component.

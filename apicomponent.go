@@ -125,7 +125,12 @@ func (api *APIComponent) Start(e *Engine) error {
 		Handler: api.router,
 	}
 
-	return api.server.ListenAndServe()
+	if err := api.server.ListenAndServe(); err != nil {
+		e.cErrs <- err
+	}
+
+	//return api.server.ListenAndServe()
+	return nil
 }
 
 // Shutdown will stop serving the API.
