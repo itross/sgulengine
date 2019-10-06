@@ -127,7 +127,15 @@ func (api *APIComponent) Start(e *Engine) error {
 	}
 
 	if err := api.server.ListenAndServe(); err != nil {
-		e.cErrs <- errors.New(fmt.Sprintf("error starting API component: %s", err))
+		// From the net/http server.go comments:
+		//
+		// "ListenAndServe always returns a non-nil error. After Shutdown or Close,
+		// the returned error is ErrServerClosed."
+		//
+		// So, here our intent is to return back to the SgulEngine all server errors but the ErrServerClosed.
+		if err != http.ErrServerClosed {
+			e.cErrs <- errors.New(fmt.Sprintf("error starting API component: %s", err))
+		}
 	}
 
 	return nil

@@ -19,6 +19,8 @@ import (
 const mysqlConnectionStringFormat = "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local"
 
 // DBProvider is the DB Component Provider contract.
+// This is here because you may choiche to not register your repository (and not have the *gorm.DB injected)
+// and make them resolve the DB Component with the ComponentLocator to get the *gorm.DB instance by themselves.
 type DBProvider interface {
 	DB() *gorm.DB
 }
