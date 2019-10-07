@@ -66,7 +66,7 @@ func NewDefaultAPIComponent() *APIComponent {
 // NewDefaultAPIComponentWith returns a new API component instance configured
 // with default middlewares and initialized with the controllers list.
 func NewDefaultAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
-	return NewAPIComponent().WithControllers(controllers...)
+	return NewDefaultAPIComponent().WithControllers(controllers...)
 }
 
 // Configure willl configure the api component with its internal server and router.
