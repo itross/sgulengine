@@ -91,9 +91,25 @@ func (dbc *DBComponent) DB() *gorm.DB {
 	return dbc.db
 }
 
-// AddRepository adds a sgul Repository to the managed repositories.
-func (dbc *DBComponent) AddRepository(repository sgul.GormRepositoryInterface) *DBComponent {
-	dbc.repositories = append(dbc.repositories, repository)
+// AddRepositories adds multiple repositories.
+func (dbc *DBComponent) AddRepositories(repositories ...sgul.GormRepositoryInterface) {
+	dbc.repositories = append(dbc.repositories, repositories...)
+}
+
+// AddRepository adds multiple repositories.
+func (dbc *DBComponent) AddRepository(repository sgul.GormRepositoryInterface) {
+	dbc.AddRepositories(repository)
+}
+
+// WithRepositories adds multiple  sgul Repository to the managed repositories and return the db component instance.
+func (dbc *DBComponent) WithRepositories(repositories ...sgul.GormRepositoryInterface) *DBComponent {
+	dbc.AddRepositories(repositories...)
+	return dbc
+}
+
+// WithRepository adds a sgul Repository to the managed repositories and return the db component instance.
+func (dbc *DBComponent) WithRepository(repository sgul.GormRepositoryInterface) *DBComponent {
+	dbc.AddRepositories(repository)
 	return dbc
 }
 
