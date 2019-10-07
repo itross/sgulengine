@@ -42,8 +42,7 @@ func NewAPIComponent() *APIComponent {
 	}
 }
 
-// NewAPIComponentWith returns a new API component instance initialized with the
-// controllers list.
+// NewAPIComponentWith returns a new API component instance initialized with the controllers list.
 func NewAPIComponentWith(controllers ...sgul.RestController) *APIComponent {
 	return NewAPIComponent().WithControllers(controllers...)
 }
