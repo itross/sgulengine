@@ -43,6 +43,11 @@ func NewDBComponent() *DBComponent {
 	}
 }
 
+// NewDBComponentWith returns a new DB Component instance initialized with the repositories list.
+func NewDBComponentWith(repositories ...sgul.GormRepositoryInterface) *DBComponent {
+	return NewDBComponent().WithRepositories(repositories...)
+}
+
 // Configure willl configure the db component.
 func (dbc *DBComponent) Configure(conf interface{}) error {
 	dbc.config = conf.(sgul.DB)
