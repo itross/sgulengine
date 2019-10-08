@@ -28,6 +28,14 @@ type BaseComponent struct {
 	logger     *sgul.Logger
 }
 
+// NewBaseComponent returns a new BaseComponent.
+func NewBaseComponent(name string) BaseComponent {
+	return BaseComponent{
+		uniqueName: name,
+		logger:     sgul.GetLogger(),
+	}
+}
+
 // Name returns the unique component name within the Engine.
 func (c *BaseComponent) Name() string {
 	return c.uniqueName

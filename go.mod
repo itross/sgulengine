@@ -9,4 +9,5 @@ require (
 	github.com/go-chi/cors v1.0.0
 	github.com/itross/sgul v0.0.0-20191007122410-37e8a73cf1b7
 	github.com/jinzhu/gorm v1.9.10
+	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271
 )

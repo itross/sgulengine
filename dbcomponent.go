@@ -36,10 +36,7 @@ type DBComponent struct {
 // NewDBComponent returns a new DB Compoennts instance.
 func NewDBComponent() *DBComponent {
 	return &DBComponent{
-		BaseComponent: BaseComponent{
-			uniqueName: "db",
-			logger:     sgul.GetLogger(),
-		},
+		BaseComponent: NewBaseComponent("db"),
 	}
 }
 

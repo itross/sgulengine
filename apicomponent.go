@@ -35,10 +35,7 @@ type APIComponent struct {
 // NewAPIComponent returns a new API component instance.
 func NewAPIComponent() *APIComponent {
 	return &APIComponent{
-		BaseComponent: BaseComponent{
-			uniqueName: "api",
-			logger:     sgul.GetLogger(),
-		},
+		BaseComponent: NewBaseComponent("api"),
 	}
 }
 
