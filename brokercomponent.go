@@ -4,22 +4,49 @@ import (
 	"github.com/itross/sgul"
 )
 
-type outboudBroker struct {
-	publishers map[string]*sgul.AMQPPublisher
-}
+type (
+	// Event Broker configuration structs
 
-type inboundBroker struct {
-	subscribers map[string]*sgul.AMQPSubscriber
-}
+	// OutboundEvent is an evt_to_producer configuration entry.
+	OutboundEvent struct {
+		Name      string
+		Publisher string
+	}
 
-// BrokerComponent is the AMQP communication manager.
-type BrokerComponent struct {
-	BaseComponent
-	config     sgul.AMQP
-	connection *sgul.AMQPConnection
-	outB       outboudBroker
-	inB        inboundBroker
-}
+	// InboundEvent is a evt_to_consumer configuration entry.
+	InboundEvent struct {
+		Name       string
+		Subscriber string
+	}
+
+	// Events is the event mapping configuration struct.
+	Events struct {
+		Outbounds []OutboundEvent
+		Inbounds  []InboundEvent
+	}
+
+	// BrokerConfig .
+	BrokerConfig struct {
+		Events Events
+	}
+
+	outboudBroker struct {
+		publishers map[string]*sgul.AMQPPublisher
+	}
+
+	inboundBroker struct {
+		subscribers map[string]*sgul.AMQPSubscriber
+	}
+
+	// BrokerComponent is the AMQP communication manager.
+	BrokerComponent struct {
+		BaseComponent
+		config     BrokerConfig
+		connection *sgul.AMQPConnection
+		outB       outboudBroker
+		inB        inboundBroker
+	}
+)
 
 // NewBroker returns new Broker component instance.
 func NewBroker() *BrokerComponent {
@@ -30,7 +57,7 @@ func NewBroker() *BrokerComponent {
 
 // Configure .
 func (brk *BrokerComponent) Configure(conf interface{}) error {
-	brk.config = conf.(sgul.AMQP)
+	sgul.LoadConfiguration(brk.config)
 	return nil
 }
 
@@ -52,3 +79,7 @@ func (brk *BrokerComponent) Shutdown() {
 		brk.logger.Errorf("error shutting down Broker Component", "error", err)
 	}
 }
+
+// func (brk *BrokerComponent) AddEventPublisher(eventName, routingKey string) error {
+// 	if err := brk.connection.Publisher()
+// }
