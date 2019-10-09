@@ -21,8 +21,8 @@ type (
 
 	// Events is the event mapping configuration struct.
 	Events struct {
-		Outbounds []OutboundEvent
-		Inbounds  []InboundEvent
+		Outbound []OutboundEvent
+		Inbound  []InboundEvent
 	}
 
 	// BrokerConfig .
