@@ -1,6 +1,8 @@
 package sgulengine
 
 import (
+	"fmt"
+
 	"github.com/itross/sgul"
 )
 
@@ -67,7 +69,8 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 	brk.logger.Debugf("Connecting to AMQP server at: %s", brk.connection.URI)
 
 	if err := brk.connection.Connect(); err != nil {
-		return err
+		e.cErrs <- fmt.Errorf("error starting Event Broker component: %s", err)
+		return nil
 	}
 	brk.logger.Debug("AMQP connection esabilished")
 	return nil
