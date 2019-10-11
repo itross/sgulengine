@@ -72,7 +72,7 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 		e.cErrs <- fmt.Errorf("error starting Event Broker component: %s", err)
 		return nil
 	}
-	brk.logger.Debug("AMQP connection esabilished")
+	brk.logger.Info("AMQP connection esabilished")
 	return nil
 }
 
