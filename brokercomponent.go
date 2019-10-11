@@ -75,8 +75,10 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 
 // Shutdown will stop AMQP channel and connection.
 func (brk *BrokerComponent) Shutdown() {
-	if err := brk.connection.Close(); err != nil {
-		brk.logger.Errorf("error shutting down Broker Component", "error", err)
+	if brk.connection != nil {
+		if err := brk.connection.Close(); err != nil {
+			brk.logger.Errorf("error shutting down Broker Component", "error", err)
+		}
 	}
 }
 
