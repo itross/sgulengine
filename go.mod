@@ -7,7 +7,7 @@ require (
 	github.com/common-nighthawk/go-figure v0.0.0-20190529165535-67e0ed34491a
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.0.0
-	github.com/itross/sgul v0.0.0-20191011145418-9dd3551bde84
+	github.com/itross/sgul v0.0.0-20191011152039-08f8b758756a
 	github.com/jinzhu/gorm v1.9.10
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271
 )
