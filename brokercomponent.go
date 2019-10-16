@@ -78,6 +78,7 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 
 	// initialize events -> publishers map
 	brk.logger.Infof("initialize events->publishers map")
+	brk.logger.Debugf("config: %+v", brk.config)
 	for _, evt := range brk.config.Events.Outbound {
 		brk.outB.publishers[evt.Name] = brk.connection.Publishers[evt.Publisher]
 		brk.logger.Infof("%s publisher registered for %s event", evt.Publisher, evt.Name)
