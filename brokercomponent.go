@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/itross/sgul"
+	"github.com/mitchellh/mapstructure"
 )
 
 type (
@@ -62,8 +63,10 @@ func NewBroker() *BrokerComponent {
 // Configure .
 func (brk *BrokerComponent) Configure(conf interface{}) error {
 	//sgul.LoadConfiguration(brk.config)
-	brk.config = conf.(BrokerConfig)
-	return nil
+	//brk.config = conf.(BrokerConfig)
+	// return nil
+
+	return mapstructure.Decode(conf, &brk.config)
 }
 
 // Start will start the Broker component starting a connection to the AMQP server.
