@@ -25,7 +25,7 @@ type Engine struct {
 	stopch chan os.Signal
 	logger *sgul.Logger
 	ctx    context.Context
-	cErrs 	chan error
+	cErrs  chan error
 }
 
 // New returns a new sgul Engine instance.
@@ -35,7 +35,7 @@ func New() *Engine {
 		stopch: make(chan os.Signal),
 		logger: sgul.GetLogger(),
 		ctx:    context.Background(),
-		cErrs: make(chan error),
+		cErrs:  make(chan error),
 	}
 	// set up os signal notifications
 	signal.Notify(e.stopch, syscall.SIGTERM)
@@ -136,6 +136,7 @@ func (e *Engine) configureComponent(component Component) error {
 	e.logger.Infof("configuring %s component", cname)
 
 	cconf := sgul.GetComponentConfig(cname)
+	e.logger.Debugf("*** %s component configuration: %+v", cname, cconf)
 	if cconf == nil {
 		return errors.New("no configuration found")
 	}
