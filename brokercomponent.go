@@ -61,7 +61,8 @@ func NewBroker() *BrokerComponent {
 
 // Configure .
 func (brk *BrokerComponent) Configure(conf interface{}) error {
-	sgul.LoadConfiguration(brk.config)
+	//sgul.LoadConfiguration(brk.config)
+	brk.config = conf.(BrokerConfig)
 	return nil
 }
 
