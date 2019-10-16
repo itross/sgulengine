@@ -77,6 +77,7 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 	brk.logger.Info("AMQP connection esabilished")
 
 	// initialize events -> publishers map
+	brk.logger.Infof("initialize events->publishers map")
 	for _, evt := range brk.config.Events.Outbound {
 		brk.outB.publishers[evt.Name] = brk.connection.Publishers[evt.Publisher]
 		brk.logger.Infof("%s publisher registered for %s event", evt.Publisher, evt.Name)
