@@ -54,6 +54,8 @@ type (
 func NewBroker() *BrokerComponent {
 	return &BrokerComponent{
 		BaseComponent: NewBaseComponent("broker"),
+		outB:          outboudBroker{publishers: make(map[string]*sgul.AMQPPublisher)},
+		inB:           inboundBroker{subscribers: make(map[string]*sgul.AMQPSubscriber)},
 	}
 }
 
@@ -73,6 +75,13 @@ func (brk *BrokerComponent) Start(e *Engine) error {
 		return nil
 	}
 	brk.logger.Info("AMQP connection esabilished")
+
+	// initialize events -> publishers map
+	for _, evt := range brk.config.Events.Outbound {
+		brk.outB.publishers[evt.Name] = brk.connection.Publishers[evt.Publisher]
+		brk.logger.Infof("%s publisher registered for %s event", evt.Publisher, evt.Name)
+	}
+
 	return nil
 }
 
@@ -83,6 +92,11 @@ func (brk *BrokerComponent) Shutdown() {
 			brk.logger.Errorf("error shutting down Broker Component", "error", err)
 		}
 	}
+}
+
+// PublisherFor returns the AMQP Publisher registered for the event name.
+func (brk *BrokerComponent) PublisherFor(evtName string) *sgul.AMQPPublisher {
+	return brk.outB.publishers[evtName]
 }
 
 // func (brk *BrokerComponent) AddEventPublisher(eventName, routingKey string) error {
