@@ -102,6 +102,8 @@ github.com/itross/sgul v0.0.0-20191021094034-031c8d6326ce h1:HzF+NNzY2rgrZMHP680
 github.com/itross/sgul v0.0.0-20191021094034-031c8d6326ce/go.mod h1:trGSb0b1tbU0hDDQMGreTREQjP7h7GECHjqydN2KEYc=
 github.com/itross/sgul v0.0.0-20191021094651-c9131fcf3bfc h1:fuHl2J5EmNKDXCSj8rUO8O8hkACQhsuHZ1RrKXRuupg=
 github.com/itross/sgul v0.0.0-20191021094651-c9131fcf3bfc/go.mod h1:trGSb0b1tbU0hDDQMGreTREQjP7h7GECHjqydN2KEYc=
+github.com/itross/sgul v0.0.0-20191021095215-586b05610114 h1:k59qvDdKTbm3MKx5OgcW54zypWyfO9m8DRSzatYZRxw=
+github.com/itross/sgul v0.0.0-20191021095215-586b05610114/go.mod h1:trGSb0b1tbU0hDDQMGreTREQjP7h7GECHjqydN2KEYc=
 github.com/jinzhu/gorm v1.9.10 h1:HvrsqdhCW78xpJF67g1hMxS6eCToo9PZH4LDB8WKPac=
 github.com/jinzhu/gorm v1.9.10/go.mod h1:Kh6hTsSGffh4ui079FHrR5Gg+5D0hgihqDcsDN2BBJY=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
